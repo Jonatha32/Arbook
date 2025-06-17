@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math';
 import 'package:intl/intl.dart';
 import 'write_entry_screen.dart';
+import 'profile_screen.dart';
+import 'services/database_service.dart';
+import 'recommendations.dart';
 
 // Definición de la paleta de colores como constantes
 const Color kBackgroundColor = Color(0xfff0eff4);
@@ -96,6 +99,34 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     final random = Random();
     _inspirationalPhrase = _phrases[random.nextInt(_phrases.length)];
   }
+  
+  // Método para obtener una frase poética para la sección "Ecos del Tiempo"
+  String _getPastJourneyQuote() {
+    final random = Random();
+    final quotes = [
+      "Este mensaje fue escrito por ti... un día antes de conocerte. Porque aunque no hayas usado esta app antes, algo en ti sabía que ibas a necesitar esto.",
+      "Hace un año, alguien como tú también estaba atravesando algo fuerte. Esto es lo que te habría dicho: 'No tienes que poder con todo hoy, solo con este momento.'",
+      "Un día mirarás atrás y entenderás por qué el caos tenía sentido. Tu yo del pasado ya lo sabía.",
+      "Las emociones que sentiste hace un año siguen vivas en alguna parte de ti. ¿Te gustaría recuperarlas?",
+      "Cada Pokémon guarda una memoria especial. Tus emociones pasadas también merecen ser capturadas.",
+    ];
+    
+    return quotes[random.nextInt(quotes.length)];
+  }
+  
+  // Método para obtener un mensaje para la sección "Pokéball del Tiempo"
+  String _getTimeCapsuleMessage() {
+    final random = Random();
+    final messages = [
+      "Todavía no has programado ninguna carta hacia el futuro... ¿Quieres dejarle un mensaje a tu yo del próximo año?",
+      "Las Pokéballs del tiempo guardan tus palabras hasta que estés listo para recibirlas. ¿Qué te gustaría decirte a ti mismo en el futuro?",
+      "El tiempo es como un Pokémon legendario: poderoso pero esquivo. Atrapa un momento para tu futuro yo.",
+      "¿Qué consejo necesitará tu yo del futuro? Escríbelo ahora y envíalo a través del tiempo.",
+      "Crea una cápsula del tiempo emocional. Tu futuro yo te lo agradecerá.",
+    ];
+    
+    return messages[random.nextInt(messages.length)];
+  }
 
   void _toggleMoodSelector() {
     setState(() {
@@ -162,10 +193,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 ),
                 actions: [
                   IconButton(
+                    icon: Icon(Icons.person, color: kBackgroundColor),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                      );
+                    },
+                    tooltip: 'Mi Perfil',
+                  ),
+                  IconButton(
                     icon: Icon(Icons.catching_pokemon, color: kBackgroundColor),
                     onPressed: () {
                       // Navegar a configuración
                     },
+                    tooltip: 'Configuración',
                   ),
                 ],
               ),
@@ -487,7 +529,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       
                       const SizedBox(height: 24),
                       
-                      // Carta del pasado
+                      // Carta del pasado - "Ecos del tiempo"
                       Card(
                         elevation: 4,
                         shape: RoundedRectangleBorder(
@@ -507,7 +549,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'De tu viaje anterior',
+                                    'Ecos del Tiempo',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -517,21 +559,68 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 ],
                               ),
                               const SizedBox(height: 12),
-                              Text(
-                                'Un recuerdo de tu aventura hace un año...',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: kPrimaryColor,
+                              
+                              // Contenido poético para usuarios nuevos
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: kDarkAccentColor.withOpacity(0.1),
+                                      blurRadius: 5,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _getPastJourneyQuote(),
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontStyle: FontStyle.italic,
+                                        color: kPrimaryColor,
+                                        height: 1.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        '— Tu yo del pasado',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: kDarkAccentColor,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
+                              
                               const SizedBox(height: 16),
                               Center(
                                 child: OutlinedButton.icon(
                                   onPressed: () {
-                                    // Abrir carta del pasado
+                                    // Crear un recuerdo retroactivo
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => WriteEntryScreen(
+                                          entryType: 'Recuerdo Retroactivo',
+                                          prompt: '¿Qué te gustaría haber escrito hace un año?',
+                                          mood: _selectedMood,
+                                          pokemon: _selectedPokemon,
+                                        ),
+                                      ),
+                                    );
                                   },
-                                  icon: const Icon(Icons.visibility_outlined),
-                                  label: const Text('Ver recuerdo'),
+                                  icon: const Icon(Icons.edit_outlined),
+                                  label: const Text('Crear recuerdo retroactivo'),
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: kDarkAccentColor,
                                     side: BorderSide(color: kDarkAccentColor),
@@ -547,7 +636,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       
                       const SizedBox(height: 24),
                       
-                      // Carta programada
+                      // Carta programada - "Pokéball del tiempo"
                       Card(
                         elevation: 4,
                         shape: RoundedRectangleBorder(
@@ -567,7 +656,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'Pokéball del tiempo',
+                                    'Pokéball del Tiempo',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -577,21 +666,77 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 ],
                               ),
                               const SizedBox(height: 12),
-                              Text(
-                                'Tienes un mensaje esperándote desde el pasado',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: kPrimaryColor,
+                              
+                              // Mensaje para usuarios sin cartas programadas
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: kAccentColor.withOpacity(0.1),
+                                      blurRadius: 5,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _getTimeCapsuleMessage(),
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: kPrimaryColor,
+                                        height: 1.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.schedule,
+                                          size: 16,
+                                          color: kAccentColor,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'Viaje al futuro',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: kAccentColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
+                              
                               const SizedBox(height: 16),
                               Center(
                                 child: ElevatedButton.icon(
                                   onPressed: () {
-                                    // Abrir carta programada
+                                    // Crear una carta programada para el futuro
+                                    final futureDate = DateTime.now().add(const Duration(days: 365));
+                                    final formattedDate = DateFormat('dd/MM/yyyy').format(futureDate);
+                                    
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => WriteEntryScreen(
+                                          entryType: 'Carta al Futuro',
+                                          prompt: '¿Qué te gustaría decirle a tu yo del $formattedDate?',
+                                          mood: _selectedMood,
+                                          pokemon: _selectedPokemon,
+                                        ),
+                                      ),
+                                    );
                                   },
-                                  icon: const Icon(Icons.lock_open_rounded),
-                                  label: const Text('Abrir Pokéball'),
+                                  icon: const Icon(Icons.send),
+                                  label: const Text('Enviar al futuro'),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: kAccentColor,
                                     foregroundColor: Colors.white,
@@ -637,25 +782,40 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 ],
                               ),
                               const SizedBox(height: 16),
-                              _buildRecommendationItem(
+                              
+                              // Recomendación de libro
+                              _buildDailyRecommendation(
                                 'Libro',
-                                'Pokémon: La historia oficial',
-                                'The Pokémon Company',
+                                getRandomRecommendation(books),
                                 Icons.book_outlined,
                               ),
                               const Divider(),
-                              _buildRecommendationItem(
+                              
+                              // Recomendación de canción
+                              _buildDailyRecommendation(
                                 'Canción',
-                                'Tema de Pokémon',
-                                'Jason Paige',
+                                getRandomRecommendation(songs),
                                 Icons.music_note_outlined,
                               ),
                               const Divider(),
-                              _buildRecommendationItem(
+                              
+                              // Recomendación de película
+                              _buildDailyRecommendation(
                                 'Película',
-                                'Pokémon: Detective Pikachu',
-                                'Rob Letterman',
+                                getRandomRecommendation(movies),
                                 Icons.movie_outlined,
+                              ),
+                              
+                              const SizedBox(height: 8),
+                              Center(
+                                child: Text(
+                                  'Recomendaciones actualizadas diariamente',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: kPrimaryColor.withOpacity(0.7),
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -782,8 +942,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildRecommendationItem(
-      String type, String title, String author, IconData icon) {
+  Widget _buildDailyRecommendation(
+      String type, Recommendation recommendation, IconData icon) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -795,26 +955,57 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  type,
-                  style: TextStyle(
-                    color: kPrimaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      type,
+                      style: TextStyle(
+                        color: kPrimaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    if (recommendation.link.isNotEmpty)
+                      InkWell(
+                        onTap: () {
+                          // Aquí se podría abrir el enlace
+                        },
+                        child: Icon(
+                          Icons.open_in_new,
+                          size: 16,
+                          color: kAccentColor,
+                        ),
+                      ),
+                  ],
                 ),
                 Text(
-                  title,
+                  recommendation.title,
                   style: const TextStyle(
                     fontSize: 16,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
-                  author,
+                  recommendation.creator,
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 14,
                   ),
                 ),
+                if (recommendation.description.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      recommendation.description,
+                      style: TextStyle(
+                        color: kPrimaryColor.withOpacity(0.8),
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
               ],
             ),
           ),

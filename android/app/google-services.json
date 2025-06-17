@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "776681293143",
-    "project_id": "lettersapp-3abb4",
-    "storage_bucket": "lettersapp-3abb4.firebasestorage.app"
+    "project_number": "1008538191584",
+    "project_id": "arbook-216b5",
+    "storage_bucket": "arbook-216b5.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:776681293143:android:767e68529b14c03ad3aa12",
+        "mobilesdk_app_id": "1:1008538191584:android:a62ec25d98a01c1bc2b285",
         "android_client_info": {
           "package_name": "com.example.myapp"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAKjFpjWhsoT4r3CvXFjko27gBF74uO2gA"
+          "current_key": "AIzaSyC9tl9LktYDj_xbsvL5iFSSHvvdVsJaudw"
         }
       ],
       "services": {
