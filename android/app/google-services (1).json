@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "776681293143",
+    "project_id": "lettersapp-3abb4",
+    "storage_bucket": "lettersapp-3abb4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:776681293143:android:767e68529b14c03ad3aa12",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKjFpjWhsoT4r3CvXFjko27gBF74uO2gA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

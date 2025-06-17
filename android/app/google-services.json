@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "66038021865",
+    "project_id": "casse-bd87d",
+    "storage_bucket": "casse-bd87d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66038021865:android:67358fe0ece2fb7c13fa78",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNJs9QkC6dsNvOgUk3j-zJtxWyt69JlX4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
