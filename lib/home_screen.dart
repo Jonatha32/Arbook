@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math';
 import 'package:intl/intl.dart';
+import 'write_entry_screen.dart';
 
 // Definición de la paleta de colores como constantes
 const Color kBackgroundColor = Color(0xfff0eff4);
@@ -228,21 +229,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                               Container(
                                                 width: 70,
                                                 height: 70,
-                                                padding: const EdgeInsets.all(8),
                                                 decoration: BoxDecoration(
-                                                  color: mood['color'].withOpacity(0.2),
                                                   borderRadius: BorderRadius.circular(35),
                                                   border: Border.all(color: mood['color'], width: 2),
-                                                ),
-                                                child: Center(
-                                                  child: ClipRRect(
-                                                    borderRadius: BorderRadius.circular(35),
-                                                    child: Image.asset(
-                                                      'assets/${mood['pokemon'].toLowerCase()}.jpg',
-                                                      fit: BoxFit.cover,
-                                                      width: 60,
-                                                      height: 60,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: mood['color'].withOpacity(0.3),
+                                                      blurRadius: 5,
+                                                      offset: const Offset(0, 2),
                                                     ),
+                                                  ],
+                                                ),
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.circular(35),
+                                                  child: Image.asset(
+                                                    'assets/${mood['pokemon'].toLowerCase()}.jpg',
+                                                    fit: BoxFit.cover,
+                                                    width: 70,
+                                                    height: 70,
                                                   ),
                                                 ),
                                               ),
@@ -279,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       
                       const SizedBox(height: 24),
                       
-                      // Botones de acción emocional
+                      // Botones de acción emocional basados en el estado de ánimo
                       Card(
                         elevation: 4,
                         shape: RoundedRectangleBorder(
@@ -300,22 +304,181 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                 ),
                               ),
                               const SizedBox(height: 16),
+                              
+                              // Selector de tipo de entrada
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: kHighlightColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: kHighlightColor.withOpacity(0.5)),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '¿Qué tipo de entrada quieres crear?',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: kPrimaryColor,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: [
+                                          _buildEntryTypeChip('Carta', Icons.mail_outline, kAccentColor),
+                                          _buildEntryTypeChip('Diario', Icons.book_outlined, kPrimaryColor),
+                                          _buildEntryTypeChip('Recuerdo', Icons.photo_album_outlined, Colors.purple),
+                                          _buildEntryTypeChip('Poema', Icons.music_note_outlined, Colors.teal),
+                                          _buildEntryTypeChip('Idea', Icons.lightbulb_outline, Colors.amber),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              
+                              const SizedBox(height: 20),
+                              
+                              // Botones emocionales adaptados al estado
                               _buildEmotionalButton(
-                                '¿Qué sentimiento quieres atrapar?',
+                                _selectedMood == 'Triste' || _selectedMood == 'Melancólico' ? 
+                                  '¿Quieres soltar algo que duele?' : 
+                                  '¿Qué sentimiento quieres atrapar?',
                                 Icons.catching_pokemon,
                                 kAccentColor,
                               ),
                               const SizedBox(height: 12),
                               _buildEmotionalButton(
-                                '¿A qué entrenador quieres escribir?',
+                                _selectedMood == 'Adaptable' || _selectedMood == 'Tranquilo' ? 
+                                  '¿A quién extrañas hoy?' : 
+                                  '¿A qué entrenador quieres escribir?',
                                 Icons.mail_outline_rounded,
                                 kDarkAccentColor,
                               ),
                               const SizedBox(height: 12),
                               _buildEmotionalButton(
-                                '¿Algún recuerdo para tu Pokédex?',
+                                _selectedMood == 'Energético' || _selectedMood == 'Apasionado' ? 
+                                  '¿Hay algo hermoso que quieras atesorar?' : 
+                                  '¿Algún recuerdo para tu Pokédex?',
                                 Icons.favorite_border_rounded,
                                 kHighlightColor,
+                              ),
+                              
+                              const SizedBox(height: 16),
+                              
+                              // Escritura guiada
+                              Center(
+                                child: TextButton.icon(
+                                  onPressed: () {
+                                    // Lista de prompts de inspiración
+                                    final random = Random();
+                                    final prompts = [
+                                      "¿Qué momento de esta semana no quieres olvidar?",
+                                      "¿Qué le dirías a alguien que no puedes ver?",
+                                      "¿Qué Pokémon te gustaría ser hoy y por qué?",
+                                      "¿Qué batalla emocional has ganado recientemente?",
+                                      "¿Qué recuerdo guardarías en una Pokéball especial?"
+                                    ];
+                                    
+                                    // Seleccionar un prompt aleatorio
+                                    final selectedPrompt = prompts[random.nextInt(prompts.length)];
+                                    
+                                    // Mostrar diálogo con opciones
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text(
+                                          'Inspiración para escribir',
+                                          style: TextStyle(color: kPrimaryColor),
+                                        ),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              selectedPrompt,
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontStyle: FontStyle.italic,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 20),
+                                            Text(
+                                              '¿Quieres escribir sobre esto?',
+                                              style: TextStyle(color: kPrimaryColor),
+                                            ),
+                                          ],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              // Mostrar otro prompt
+                                              final newPrompt = prompts[random.nextInt(prompts.length)];
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(newPrompt),
+                                                  backgroundColor: kPrimaryColor,
+                                                  action: SnackBarAction(
+                                                    label: 'Escribir',
+                                                    textColor: kHighlightColor,
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) => WriteEntryScreen(
+                                                            entryType: 'Reflexión',
+                                                            prompt: newPrompt,
+                                                            mood: _selectedMood,
+                                                            pokemon: _selectedPokemon,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: Text(
+                                              'Otra idea',
+                                              style: TextStyle(color: kAccentColor),
+                                            ),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              // Navegar a la pantalla de escritura con el prompt
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => WriteEntryScreen(
+                                                    entryType: 'Reflexión',
+                                                    prompt: selectedPrompt,
+                                                    mood: _selectedMood,
+                                                    pokemon: _selectedPokemon,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: kAccentColor,
+                                            ),
+                                            child: Text('Escribir ahora'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  icon: Icon(Icons.lightbulb_outline, color: kHighlightColor),
+                                  label: Text(
+                                    '¿Necesitas inspiración?',
+                                    style: TextStyle(color: kHighlightColor),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -538,10 +701,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navegar a la pantalla de nueva entrada
+          // Navegar a la pantalla de escritura con una entrada rápida
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WriteEntryScreen(
+                entryType: 'Nota rápida',
+                prompt: '',
+                mood: _selectedMood,
+                pokemon: _selectedPokemon,
+              ),
+            ),
+          );
         },
         backgroundColor: kAccentColor,
-        child: const Icon(Icons.catching_pokemon, color: Colors.white),
+        child: const Icon(Icons.edit, color: Colors.white),
       ),
     );
   }
@@ -551,7 +725,30 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          // Navegar a la pantalla de nueva entrada con el tipo seleccionado
+          // Determinar el tipo de entrada basado en el icono
+          String entryType;
+          if (icon == Icons.catching_pokemon) {
+            entryType = 'Sentimiento';
+          } else if (icon == Icons.mail_outline_rounded) {
+            entryType = 'Carta';
+          } else if (icon == Icons.favorite_border_rounded) {
+            entryType = 'Recuerdo';
+          } else {
+            entryType = 'Nota';
+          }
+          
+          // Navegar a la pantalla de escritura con el prompt como guía
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WriteEntryScreen(
+                entryType: entryType,
+                prompt: text,
+                mood: _selectedMood,
+                pokemon: _selectedPokemon,
+              ),
+            ),
+          );
         },
         borderRadius: BorderRadius.circular(12),
         child: Container(
@@ -622,6 +819,33 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
           ),
         ],
+      ),
+    );
+  }
+  
+  Widget _buildEntryTypeChip(String label, IconData icon, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: ActionChip(
+        avatar: Icon(icon, color: color, size: 18),
+        label: Text(label),
+        labelStyle: TextStyle(color: color, fontWeight: FontWeight.bold),
+        backgroundColor: color.withOpacity(0.1),
+        side: BorderSide(color: color.withOpacity(0.5)),
+        onPressed: () {
+          // Navegar a la pantalla de escritura con el tipo seleccionado
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WriteEntryScreen(
+                entryType: label,
+                prompt: '',
+                mood: _selectedMood,
+                pokemon: _selectedPokemon,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
