@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:myapp/register_screen.dart'; // Import the RegisterScreen
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -238,22 +239,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: 15),
-                          OutlinedButton(
-                            // Usamos OutlinedButton para el registro
-                            onPressed: _signUp,
-                            style: OutlinedButton.styleFrom(
+                          TextButton( // Use TextButton for the "Create New Account" button
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                              );
+                            },
+                            style: TextButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              side: const BorderSide(
-                                  color: Colors.blueGrey), // Borde
                             ),
-                            child: const Text(
-                              'Crear Nueva Cuenta',
-                              style: TextStyle(
-                                  fontSize: 18, color: Colors.blueGrey),
-                            ),
+                            child: const Text('Crear Nueva Cuenta'), // Text for the button
                           ),
                         ],
                       ),
