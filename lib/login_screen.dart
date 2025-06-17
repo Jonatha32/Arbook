@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:myapp/register_screen.dart'; // Import the RegisterScreen
+import 'package:myapp/register_screen.dart';
+
+// Definición de la paleta de colores como constantes
+const Color kBackgroundColor = Color(0xfff0eff4);
+const Color kPrimaryColor = Color(0xff004e64);
+const Color kAccentColor = Color(0xffed6a5a);
+const Color kHighlightColor = Color(0xffffdd4a);
+const Color kDarkAccentColor = Color(0xff6b0f1a);
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -15,40 +22,38 @@ class _LoginScreenState extends State<LoginScreen> {
   String _email = '';
   String _password = '';
   String _errorMessage = '';
-  bool _isLoading = false; // Nueva variable para controlar el estado de carga
+  bool _isLoading = false;
+  bool _obscurePassword = true; // Para mostrar/ocultar contraseña
 
-  //Función para iniciar sesión
   Future<void> _signIn() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       setState(() {
-        _isLoading = true; // Mostrar indicador de carga
-        _errorMessage = ''; // Limpiar mensaje de error anterior
+        _isLoading = true;
+        _errorMessage = '';
       });
       try {
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: _email,
           password: _password,
         );
-        // Si el inicio de sesión es exitoso:
-        print('Usuario logeado: ${userCredential.user!.email}');
-        // Aquí puedes navegar a tu pantalla de inicio (HomeScreen)
-        // Ejemplo: Navigator.pushReplacementNamed(context, '/home');
-        // O, si estás usando el StreamBuilder en main.dart, la navegación es automática.
+        // Si el inicio de sesión es exitoso
+        print('Usuario conectado: ${userCredential.user!.email}');
+        // La navegación se manejará automáticamente si estás usando StreamBuilder
       } on FirebaseAuthException catch (e) {
         String message;
         switch (e.code) {
           case 'user-not-found':
-            message = 'No se encontró un usuario con ese email.';
+            message = 'No encontramos un entrenador con este email.';
             break;
           case 'wrong-password':
-            message = 'Contraseña incorrecta.';
+            message = 'La contraseña no es correcta.';
             break;
           case 'invalid-email':
-            message = 'El formato del email es inválido.';
+            message = 'El formato del email no es válido.';
             break;
           case 'user-disabled':
-            message = 'Este usuario ha sido deshabilitado.';
+            message = 'Esta cuenta ha sido deshabilitada.';
             break;
           default:
             message = 'Error al iniciar sesión: ${e.message ?? 'desconocido'}';
@@ -56,225 +61,288 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
           _errorMessage = message;
         });
-        print('Error de inicio de sesión: $e');
       } catch (e) {
         setState(() {
           _errorMessage = 'Ocurrió un error inesperado: ${e.toString()}';
         });
-        print('Error general: $e');
       } finally {
         setState(() {
-          _isLoading = false; // Ocultar indicador de carga al finalizar
+          _isLoading = false;
         });
       }
     }
   }
 
-  //Función para registrar un nuevo usuario
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:1957884248.
-  Future<void> _signUp() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      setState(() {
-        _isLoading = true; // Mostrar indicador de carga
-        _errorMessage = ''; // Limpiar mensaje de error anterior
-      });
-      try {
-        UserCredential userCredential =
-            await _auth.createUserWithEmailAndPassword(
-          email: _email,
-          password: _password,
-        );
-        // Si el registro es exitoso:
-        print('Usuario registrado: ${userCredential.user!.email}');
-        // Opcional: Enviar email de verificación
-        // await userCredential.user!.sendEmailVerification();
-        // print('Email de verificación enviado.');
-
-        // Aquí puedes navegar a una pantalla de confirmación o directamente a HomeScreen
-        // Ejemplo: Navigator.pushReplacementNamed(context, '/welcome');
-        // O, si estás usando el StreamBuilder, la navegación es automática.
-      } on FirebaseAuthException catch (e) {
-        String message;
-        switch (e.code) {
-          case 'weak-password':
-            message = 'La contraseña es demasiado débil.';
-            break;
-          case 'email-already-in-use':
-            message = 'Ya existe una cuenta con este email.';
-            break;
-          case 'invalid-email':
-            message = 'El formato del email es inválido.';
-            break;
-          default:
-            message =
-                'Error al registrar usuario: ${e.message ?? 'desconocido'}';
-        }
-        setState(() {
-          _errorMessage = message;
-        });
-        print('Error de registro: $e');
-      } catch (e) {
-        setState(() {
-          _errorMessage = 'Ocurrió un error inesperado: ${e.toString()}';
-        });
-        print('Error general: $e');
-      } finally {
-        setState(() {
-          _isLoading = false; // Ocultar indicador de carga al finalizar
-        });
-      }
-    }
-  }
-
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:1237790009.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Eterna - Acceso'),
-        centerTitle: true, // Centra el título
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          // Permite scroll si el contenido es demasiado grande
-          padding: const EdgeInsets.all(24.0), // Aumenta el padding
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment:
-                  CrossAxisAlignment.stretch, // Estira los campos
-              children: <Widget>[
-                // Título o Logo (Puedes agregar una imagen o texto más grande aquí)
-                const Text(
-                  'Bienvenido a Eterna',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueGrey, // O un color de tu marca
-                  ),
-                ),
-                const SizedBox(height: 40),
-
-                TextFormField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    // Usa InputDecoration para más opciones
-                    labelText: 'Email',
-                    prefixIcon:
-                        const Icon(Icons.email_outlined), // Ícono de email
-                    border: OutlineInputBorder(
-                      // Borde redondeado
-                      borderRadius: BorderRadius.circular(8.0),
+      backgroundColor: kBackgroundColor,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  // Logo de Pokéball
+                  Container(
+                    height: 100,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: kAccentColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: kPrimaryColor.withOpacity(0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Image.asset('assets/logo.png',
+                          width: 80, height: 80),
                     ),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, ingresa tu email';
-                    }
-                    // Validación de formato de email más simple
-                    if (!value.contains('@') || !value.contains('.')) {
-                      return 'Ingresa un email válido';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _email = value!.trim(); // Elimina espacios en blanco
-                  },
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Contraseña',
-                    prefixIcon:
-                        const Icon(Icons.lock_outline), // Ícono de candado
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    suffixIcon: IconButton(
-                      // Botón para mostrar/ocultar contraseña (implementación extra)
-                      icon: Icon(Icons.visibility), // Icono base
-                      onPressed: () {
-                        // TODO: Implementar lógica para mostrar/ocultar contraseña
-                      },
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, ingresa tu contraseña';
-                    }
-                    if (value.length < 6) {
-                      return 'La contraseña debe tener al menos 6 caracteres';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _password = value!;
-                  },
-                ),
-                const SizedBox(height: 30),
-
-                // Botones con indicador de carga
-                _isLoading
-                    ? const Center(
-                        child:
-                            CircularProgressIndicator()) // Mostrar indicador si está cargando
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ElevatedButton(
-                            onPressed: _signIn,
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                            child: const Text(
-                              'Iniciar Sesión',
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ),
-                          const SizedBox(height: 15),
-                          TextButton( // Use TextButton for the "Create New Account" button
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                              );
-                            },
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                            ),
-                            child: const Text('Crear Nueva Cuenta'), // Text for the button
-                          ),
-                        ],
-                      ),
-
-                const SizedBox(height: 20),
-
-                // Mostrar mensaje de error si existe
-                if (_errorMessage.isNotEmpty)
+                  const SizedBox(height: 20),
+                  // Título principal
                   Text(
-                    _errorMessage,
-                    style: const TextStyle(color: Colors.red, fontSize: 14),
+                    'Arbook',
                     textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: kPrimaryColor,
+                      letterSpacing: 1.5,
+                    ),
                   ),
 
-                const SizedBox(height: 20),
+                  // Subtítulo
+                  Text(
+                    'Tu Pokédex emocional',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: kDarkAccentColor,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
 
-                // Botón para recuperar contraseña (opcional, implementar después)
-                TextButton(
-                  onPressed: () {
-                    // TODO: Implementar pantalla o diálogo para recuperar contraseña
-                    print('Recuperar contraseña presionado');
-                  },
-                  child: const Text('¿Olvidaste tu contraseña?'),
-                ),
-              ],
+                  const SizedBox(height: 50),
+
+                  // Campo de email
+                  TextFormField(
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: 'Email del Entrenador',
+                      hintText: 'Ingresa tu correo electrónico',
+                      prefixIcon: Icon(Icons.person_outline, color: kPrimaryColor),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(color: kPrimaryColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(color: kHighlightColor, width: 2.0),
+                      ),
+                      labelStyle: TextStyle(color: kPrimaryColor),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, ingresa tu email';
+                      }
+                      if (!value.contains('@') || !value.contains('.')) {
+                        return 'Ingresa un email válido';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      _email = value!.trim();
+                    },
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Campo de contraseña
+                  TextFormField(
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
+                      labelText: 'Contraseña',
+                      hintText: 'Ingresa tu contraseña secreta',
+                      prefixIcon: Icon(Icons.lock_outline, color: kPrimaryColor),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                          color: kPrimaryColor,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(color: kPrimaryColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(color: kHighlightColor, width: 2.0),
+                      ),
+                      labelStyle: TextStyle(color: kPrimaryColor),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, ingresa tu contraseña';
+                      }
+                      if (value.length < 6) {
+                        return 'La contraseña debe tener al menos 6 caracteres';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      _password = value!;
+                    },
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // Enlace para recuperar contraseña
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {
+                        // Implementar recuperación de contraseña
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: kPrimaryColor,
+                      ),
+                      child: const Text('¿Olvidaste tu contraseña?'),
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  // Botón de inicio de sesión o indicador de carga
+                  _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(kHighlightColor),
+                          ),
+                        )
+                      : ElevatedButton(
+                          onPressed: _signIn,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kAccentColor,
+                            foregroundColor: kBackgroundColor,
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            elevation: 2,
+                          ),
+                          child: const Text(
+                            'Iniciar Aventura',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+
+                  const SizedBox(height: 20),
+
+                  // Mensaje de error si existe
+                  if (_errorMessage.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: kAccentColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: kAccentColor),
+                      ),
+                      child: Text(
+                        _errorMessage,
+                        style: TextStyle(color: kAccentColor, fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+
+                  const SizedBox(height: 30),
+
+                  // Separador
+                  Row(
+                    children: [
+                      Expanded(child: Divider(color: kPrimaryColor.withOpacity(0.3))),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          '¿Nuevo entrenador?',
+                          style: TextStyle(color: kPrimaryColor),
+                        ),
+                      ),
+                      Expanded(child: Divider(color: kPrimaryColor.withOpacity(0.3))),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Botón para crear cuenta
+                  OutlinedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: kPrimaryColor,
+                      side: BorderSide(color: kPrimaryColor),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'Comenzar mi Viaje',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  // Botón para acceder directamente (modo desarrollo)
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Modo desarrollo: ',
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/direct-home');
+                          },
+                          child: const Text(
+                            'Acceder sin autenticación',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

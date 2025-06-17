@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-// Define the color palette as const
+// Definición de la paleta de colores como constantes
+const Color kBackgroundColor = Color(0xfff0eff4);
+const Color kPrimaryColor = Color(0xff004e64);
+const Color kAccentColor = Color(0xffed6a5a);
+const Color kHighlightColor = Color(0xffffdd4a);
+const Color kDarkAccentColor = Color(0xff6b0f1a);
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
 
@@ -18,6 +24,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _repeatPassword = '';
   String _errorMessage = '';
   bool _isLoading = false;
+  bool _obscurePassword = true;
+  bool _obscureRepeatPassword = true;
+  String _selectedStarter = 'Ninguno';
+
+  // Lista de Pokémon iniciales
+  final List<Map<String, dynamic>> _starters = [
+    {'name': 'Bulbasaur', 'type': 'Planta', 'color': Colors.green},
+    {'name': 'Charmander', 'type': 'Fuego', 'color': kAccentColor},
+    {'name': 'Squirtle', 'type': 'Agua', 'color': Colors.blue},
+  ];
 
   Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
@@ -27,41 +43,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _errorMessage = '';
       });
       try {
-        UserCredential userCredential =
-            await _auth.createUserWithEmailAndPassword(
+        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
           email: _email,
           password: _password,
         );
-        // Registration successful
+        
+        // Actualizar el nombre de usuario
+        await userCredential.user!.updateDisplayName(_username);
+        
+        // Opcional: Enviar email de verificación
+        await userCredential.user!.sendEmailVerification();
+        
+        // Registro exitoso
         print('Usuario registrado: ${userCredential.user!.email}');
-        // You can navigate to a confirmation screen or directly to the home screen
-        // For now, let's navigate back to the login screen
+        
+        // Mostrar mensaje de éxito antes de volver a la pantalla de login
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('¡Felicidades! Tu viaje Pokémon ha comenzado. Verifica tu email.'),
+            backgroundColor: kPrimaryColor,
+          ),
+        );
+        
+        // Volver a la pantalla de login
         Navigator.pop(context);
       } on FirebaseAuthException catch (e) {
         String message;
         switch (e.code) {
           case 'weak-password':
-            message = 'La contraseña es demasiado débil.';
+            message = 'La contraseña es demasiado débil para proteger a tus Pokémon.';
             break;
           case 'email-already-in-use':
-            message = 'Ya existe una cuenta con este email.';
+            message = 'Ya existe un entrenador con este email.';
             break;
           case 'invalid-email':
-            message = 'El formato del email es inválido.';
+            message = 'El formato del email no es válido.';
             break;
           default:
-            message =
-                'Error al registrar usuario: ${e.message ?? 'desconocido'}';
+            message = 'Error al registrar entrenador: ${e.message ?? 'desconocido'}';
         }
         setState(() {
           _errorMessage = message;
         });
-        print('Error de registro: $e');
       } catch (e) {
         setState(() {
           _errorMessage = 'Ocurrió un error inesperado: ${e.toString()}';
         });
-        print('Error general: $e');
       } finally {
         setState(() {
           _isLoading = false;
@@ -73,58 +100,141 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kBackgroundColor,
       appBar: AppBar(
+        backgroundColor: kPrimaryColor,
+        elevation: 0,
         title: const Text(
-          'Eterna - Registro',
-          style: TextStyle(color: Color(0xfff0eff4)), // Use f0eff4 for text
+          'Registro de Entrenador',
+          style: TextStyle(color: kBackgroundColor),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xff004e64), // Use 004e64 for AppBar
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: kBackgroundColor),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Container(
-              // Add a Container for background color
-              color: const Color(0xfff0eff4), // Use f0eff4 for background
-              padding: const EdgeInsets.all(16.0), // Add some padding to the container
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Form(
+              key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  const Text(
-                    'Crear Nueva Cuenta',
+                  // Título principal
+                  Text(
+                    'Comienza tu Aventura',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xff6b0f1a), // Use 6b0f1a for title
+                      color: kDarkAccentColor,
+                      letterSpacing: 0.5,
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  
+                  // Subtítulo
+                  Text(
+                    'Captura tus emociones como un verdadero entrenador',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: kPrimaryColor,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 30),
+                  
+                  // Selección de Pokémon inicial
+                  Text(
+                    'Elige tu Pokémon inicial:',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: kPrimaryColor,
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 15),
+                  
+                  // Opciones de Pokémon inicial
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: _starters.map((starter) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedStarter = starter['name'];
+                          });
+                        },
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                color: starter['color'].withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(40),
+                                border: Border.all(
+                                  color: _selectedStarter == starter['name']
+                                      ? starter['color']
+                                      : Colors.transparent,
+                                  width: 3,
+                                ),
+                              ),
+                              child: Center(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(40),
+                                  child: Image.asset(
+                                    'assets/${starter['name'].toLowerCase()}.jpg',
+                                    fit: BoxFit.cover,
+                                    width: 70,
+                                    height: 70,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              starter['type'],
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: kPrimaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  
+                  const SizedBox(height: 30),
+                  
+                  // Campo de nombre de usuario
                   TextFormField(
                     decoration: InputDecoration(
-                      labelText: 'Nombre de Usuario',
-                      prefixIcon: const Icon(Icons.person_outline, color: Color(0xff004e64)), // Use 004e64 for icon
+                      labelText: 'Nombre de Entrenador',
+                      hintText: '¿Cómo te llaman en el mundo Pokémon?',
+                      prefixIcon: Icon(Icons.person_outline, color: kPrimaryColor),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            const BorderSide(color: Color(0xff004e64)), // Use 004e64 for border
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(color: kPrimaryColor),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        // Add focused border style
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            const BorderSide(color: Color(0xffffdd4a), width: 2.0), // Use ffdd4a for focused border
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(color: kHighlightColor, width: 2.0),
                       ),
-                      labelStyle:
-                          const TextStyle(color: Color(0xff004e64)), // Use 004e64 for label text
+                      labelStyle: TextStyle(color: kPrimaryColor),
+                      filled: true,
+                      fillColor: Colors.white,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, ingresa un nombre de usuario';
+                        return 'Por favor, ingresa tu nombre de entrenador';
                       }
                       return null;
                     },
@@ -132,25 +242,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       _username = value!.trim();
                     },
                   ),
-                  const SizedBox(height: 20), // Adjust spacing
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Campo de email
                   TextFormField(
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: const Icon(Icons.email_outlined, color: Color(0xff004e64)), // Use 004e64 for icon
+                      labelText: 'Email del Entrenador',
+                      hintText: 'Ingresa tu correo electrónico',
+                      prefixIcon: Icon(Icons.email_outlined, color: kPrimaryColor),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            const BorderSide(color: Color(0xff004e64)), // Use 004e64 for border
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(color: kPrimaryColor),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        // Add focused border style
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            const BorderSide(color: Color(0xffffdd4a), width: 2.0), // Use ffdd4a for focused border
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(color: kHighlightColor, width: 2.0),
                       ),
-                      labelStyle:
-                          const TextStyle(color: Color(0xff004e64)), // Use 004e64 for label text
+                      labelStyle: TextStyle(color: kPrimaryColor),
+                      filled: true,
+                      fillColor: Colors.white,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -165,62 +277,89 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       _email = value!.trim();
                     },
                   ),
+                  
                   const SizedBox(height: 20),
+                  
+                  // Campo de contraseña
                   TextFormField(
-                    obscureText: true,
+                    obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       labelText: 'Contraseña',
-                      prefixIcon: const Icon(Icons.lock_outline, color: Color(0xff004e64)), // Use 004e64 for icon
+                      hintText: 'Crea una contraseña segura',
+                      prefixIcon: Icon(Icons.lock_outline, color: kPrimaryColor),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                          color: kPrimaryColor,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            const BorderSide(color: Color(0xff004e64)), // Use 004e64 for border
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(color: kPrimaryColor),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        // Add focused border style
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            const BorderSide(color: Color(0xffffdd4a), width: 2.0), // Use ffdd4a for focused border
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(color: kHighlightColor, width: 2.0),
                       ),
-                      labelStyle:
-                          const TextStyle(color: Color(0xff004e64)), // Use 004e64 for label text
+                      labelStyle: TextStyle(color: kPrimaryColor),
+                      filled: true,
+                      fillColor: Colors.white,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, ingresa tu contraseña';
+                        return 'Por favor, ingresa una contraseña';
                       }
                       if (value.length < 6) {
                         return 'La contraseña debe tener al menos 6 caracteres';
                       }
+                      _password = value; // Guardar para comparar con la repetición
                       return null;
                     },
                     onSaved: (value) {
                       _password = value!;
                     },
                   ),
-                  const SizedBox(height: 20), // Adjust spacing
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Campo de repetir contraseña
                   TextFormField(
-                    obscureText: true,
+                    obscureText: _obscureRepeatPassword,
                     decoration: InputDecoration(
-                      labelText: 'Repetir Contraseña',
-                      prefixIcon: const Icon(Icons.lock_reset, color: Color(0xff004e64)), // Use 004e64 for icon
+                      labelText: 'Confirmar Contraseña',
+                      hintText: 'Repite tu contraseña',
+                      prefixIcon: Icon(Icons.lock_reset, color: kPrimaryColor),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureRepeatPassword ? Icons.visibility : Icons.visibility_off,
+                          color: kPrimaryColor,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureRepeatPassword = !_obscureRepeatPassword;
+                          });
+                        },
+                      ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            const BorderSide(color: Color(0xff004e64)), // Use 004e64 for border
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(color: kPrimaryColor),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        // Add focused border style
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide:
-                            const BorderSide(color: Color(0xffffdd4a), width: 2.0), // Use ffdd4a for focused border
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide(color: kHighlightColor, width: 2.0),
                       ),
-                      labelStyle:
-                          const TextStyle(color: Color(0xff004e64)), // Use 004e64 for label text
+                      labelStyle: TextStyle(color: kPrimaryColor),
+                      filled: true,
+                      fillColor: Colors.white,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, repite tu contraseña';
+                        return 'Por favor, confirma tu contraseña';
                       }
                       if (value != _password) {
                         return 'Las contraseñas no coinciden';
@@ -231,156 +370,80 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       _repeatPassword = value!;
                     },
                   ),
+                  
                   const SizedBox(height: 30),
+                  
+                  // Botón de registro o indicador de carga
                   _isLoading
-                      ? const Center(
+                      ? Center(
                           child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Color(0xffffdd4a)), // Use ffdd4a for indicator
-                        ))
+                            valueColor: AlwaysStoppedAnimation<Color>(kHighlightColor),
+                          ),
+                        )
                       : ElevatedButton(
                           onPressed: _register,
                           style: ElevatedButton.styleFrom(
+                            backgroundColor: kAccentColor,
+                            foregroundColor: kBackgroundColor,
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: BorderRadius.circular(12.0),
                             ),
-                            backgroundColor:
-                                const Color(0xffed6a5a), // Use ed6a5a for button background
-                            foregroundColor:
-                                const Color(0xfff0eff4), // Use f0eff4 for button text
+                            elevation: 2,
                           ),
                           child: const Text(
-                            'Registrarse',
-                            style: TextStyle(fontSize: 18),
+                            'Comenzar Aventura',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
+                  
                   const SizedBox(height: 20),
+                  
+                  // Mensaje de error si existe
                   if (_errorMessage.isNotEmpty)
-                    Text(
-                      _errorMessage,
-                      style:
-                          const TextStyle(color: Color(0xffed6a5a), fontSize: 14), // Use ed6a5a for error text
-                      textAlign: TextAlign.center,
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: kAccentColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: kAccentColor),
+                      ),
+                      child: Text(
+                        _errorMessage,
+                        style: TextStyle(color: kAccentColor, fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
+                  
                   const SizedBox(height: 20),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Go back to the login screen
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xff004e64), // Use 004e64 for text button
-                    ),
-                    child: const Text('¿Ya tienes cuenta? Inicia Sesión'),
+                  
+                  // Enlace para volver a login
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '¿Ya eres un entrenador? ',
+                        style: TextStyle(color: kPrimaryColor),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: kDarkAccentColor,
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(0, 30),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: const Text(
+                          'Inicia Sesión',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-                TextFormField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, ingresa tu email';
-                    }
-                    if (!value.contains('@') || !value.contains('.')) {
-                      return 'Ingresa un email válido';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _email = value!.trim();
-                  },
-                ),
-                const SizedBox(height: 40),
-                TextFormField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: const Icon(Icons.verified_user),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, ingresa tu email';
-                    }
-                    if (!value.contains('@') || !value.contains('.')) {
-                      return 'Ingresa un email válido';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _email = value!.trim();
-                  },
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Contraseña',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, ingresa tu contraseña';
-                    }
-                    if (value.length < 6) {
-                      return 'La contraseña debe tener al menos 6 caracteres';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _password = value!;
-                  },
-                ),
-                const SizedBox(height: 30),
-                _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : ElevatedButton(
-                        onPressed: _register,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                        child: const Text(
-                          'Registrarse',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ),
-                const SizedBox(height: 20),
-                if (_errorMessage.isNotEmpty)
-                  Text(
-                    _errorMessage,
-                    style: const TextStyle(color: Colors.red, fontSize: 14),
-                    textAlign: TextAlign.center,
-                  ),
-                const SizedBox(height: 20),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Go back to the login screen
-                  },
-                  child: const Text('¿Ya tienes cuenta? Inicia Sesión'),
-                ),
-              ],
             ),
           ),
         ),
