@@ -1,135 +1,129 @@
-# myapp
+# 🌟 Arbook - Tu Pokédex Emocional 🌟
 
-Nombre (tentativo): Eterna – Your Emotional Library
+![Arbook Logo](assets/logo.png)
 
-🎯 PROPÓSITO:
-Crear una app o página web que sirva como biblioteca emocional y artística, donde los usuarios puedan escribir y guardar cartas, pensamientos, notas, recuerdos o ideas creativas.
-A diferencia de otras apps como Notion o Google Keep, Eterna está pensada para guardar lo que sentimos, no solo lo que hacemos.
+## 📱 ¿Qué es Arbook?
 
-👤 TIPO DE USUARIO:
-Artistas, escritores o creativos
+Arbook no es solo una app más de notas - es una **biblioteca emocional** con temática Pokémon donde puedes capturar, guardar y revivir tus sentimientos como si fueran criaturas preciosas que merecen ser coleccionadas.
 
-Personas que usan la escritura como vía emocional
+> "No solo guardes notas, captura lo que sientes" - Entrenador Emocional
 
-Quienes quieren guardar recuerdos personales
+## ✨ Características Principales
 
-Usuarios que buscan escribirle a un ser querido, a su yo futuro o a alguien que ya no está
+### 🎭 Mood Tracker con Pokémon
+Selecciona el Pokémon que mejor refleja tu estado de ánimo:
+- **Pikachu** ⚡ - Para cuando te sientes energético
+- **Squirtle** 💧 - Para momentos de tranquilidad
+- **Charmander** 🔥 - Cuando la pasión te consume
+- **Bulbasaur** 🌱 - Para el equilibrio perfecto
+- **Snorlax** 😴 - Cuando necesitas relajarte
+- **Eevee** ✨ - Para días de adaptabilidad
 
-💎 DIFERENCIALES CLAVE:
-Narrativa emocional:
+### 📝 Tipos de Entradas Personalizadas
+Crea diferentes tipos de contenido:
+- **Cartas** - Para expresar sentimientos hacia otros
+- **Diarios** - Para reflexiones personales
+- **Recuerdos** - Para momentos que no quieres olvidar
+- **Poemas** - Para tu lado artístico
+- **Ideas** - Para esas inspiraciones repentinas
 
-No hay "nota nueva", sino "¿Qué querés expresar hoy?"
+### ⏰ Pokéballs del Tiempo
+Envía mensajes a tu yo del futuro:
+- Programa cartas para ser "liberadas" en fechas específicas
+- Recibe notificaciones cuando una carta del pasado está lista para abrirse
+- Crea cápsulas del tiempo emocionales
 
-La interfaz guía al usuario con calidez y profundidad
+### 🔮 Ecos del Tiempo
+Revive tu viaje emocional:
+- Visualiza entradas pasadas
+- Crea recuerdos retroactivos
+- Recibe frases inspiradoras basadas en tu historia
 
-Cartas programadas:
+### 🎬 Recomendaciones Diarias
+Cada día, recibe nuevas recomendaciones de:
+- 📚 Libros que alimentarán tu alma
+- 🎵 Canciones que resonarán con tus emociones
+- 🎥 Películas que expandirán tu mundo interior
 
-Podés escribir cartas para vos mismo en el futuro (tipo “abrir el 7/11/2026”)
+## 🛠️ Tecnologías Utilizadas
 
-Ideal para propósitos, aniversarios o recuerdos
+- **Flutter** - Para una experiencia móvil fluida y hermosa
+- **Firebase Auth** - Autenticación segura para entrenadores emocionales
+- **Cloud Firestore** - Base de datos para almacenar tus capturas emocionales
+- **Firebase Storage** - Para guardar imágenes de tus momentos especiales
+- **Material Design** - UI moderna con toques de la estética Pokémon
 
-Diseño visual artístico:
+## 🚀 Instalación
 
-Cada nota o carta puede tener:
+```bash
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/arbook.git
 
-Fondo personalizado
+# Navegar al directorio
+cd arbook
 
-Tipografía manuscrita
+# Instalar dependencias
+flutter pub get
 
-Ícono de estado emocional (💔, ✨, 🌧)
+# Ejecutar la aplicación
+flutter run
+```
 
-Música asociada (Spotify API)
+## 📸 Capturas de Pantalla
 
-Película o libro sugerido
+<div style="display: flex; justify-content: space-between;">
+  <img src="screenshots/login.png" width="30%" alt="Pantalla de Login">
+  <img src="screenshots/home.png" width="30%" alt="Pantalla Principal">
+  <img src="screenshots/write.png" width="30%" alt="Escribir Entrada">
+</div>
 
-Imagen o GIF de portada
+## 🗺️ Mapa de la Aplicación
 
-Mapa emocional / calendario emocional:
+1. **Inicio de Sesión / Registro** - Comienza tu aventura
+2. **Pantalla Principal** - Tu centro de operaciones emocionales
+3. **Selector de Estado de Ánimo** - Elige tu Pokémon del día
+4. **Escritura de Entradas** - Captura tus sentimientos
+5. **Perfil de Usuario** - Tu identidad como entrenador emocional
+6. **Recomendaciones** - Inspiración diaria para tu viaje
 
-Visualización de tus entradas emocionales por día, color y tipo de emoción
+## 🧠 Filosofía del Proyecto
 
-Modo privado y público:
+Arbook nace de la idea de que nuestras emociones son como Pokémon: diversas, poderosas y merecen ser capturadas, entrenadas y comprendidas. No buscamos productividad, sino conexión emocional.
 
-Cartas pueden ser privadas o públicas
+> "Las emociones son como Pokémon raros - si no las capturas cuando aparecen, podrían desaparecer para siempre" - Filosofía Arbook
 
-Público puede seguir a otros usuarios (tipo “diarios públicos”)
+## 🤝 Contribuciones
 
-Notificaciones si una persona a la que seguís publica algo nuevo
+¡Las contribuciones son bienvenidas! Si tienes ideas para nuevos Pokémon emocionales, tipos de entradas o características:
 
-Extensión creativa (opcional futuro):
+1. Haz fork del repositorio
+2. Crea una rama para tu característica (`git checkout -b feature/amazing-feature`)
+3. Haz commit de tus cambios (`git commit -m 'Add some amazing feature'`)
+4. Push a la rama (`git push origin feature/amazing-feature`)
+5. Abre un Pull Request
 
-Impresión física de tus cartas en una caja
+## 📜 Licencia
 
-Recopilación temática (cartas de amor, para uno mismo, etc.)
+Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
 
-🔐 AUTENTICACIÓN:
-Registro e inicio de sesión con Firebase Auth (email/password, Google, etc.)
+## 💌 Contacto
 
-Verificación de correo
+¿Preguntas, sugerencias o simplemente quieres compartir tu Pokémon emocional del día? ¡Contáctanos!
 
-Posible integración con redes sociales para vincular seguidores (opcional)
+- **Email**: [arbook@example.com](mailto:arbook@example.com)
+- **Twitter**: [@ArbookApp](https://twitter.com/ArbookApp)
+- **Instagram**: [@ArbookEmotional](https://instagram.com/ArbookEmotional)
 
-🔧 BACKEND:
-Firestore como base de datos
+---
 
-Almacenamiento de cartas, metadatos, perfiles, reacciones
+<p align="center">
+  Desarrollado con 💖 y una Pokédex llena de emociones
+</p>
 
-Firebase Storage para imágenes de portada o audios
-
-Functions si es necesario para cron jobs (por ejemplo, activar cartas programadas)
-
-📱 FRONTEND:
-Se puede desarrollar en:
-
-OPCIÓN 1: Flutter (app móvil)
-Pros:
-
-Mayor conexión emocional (escribir desde el celular es más íntimo)
-
-Push notifications para recordar escribir o desbloquear cartas programadas
-
-Mejor UX para quienes ya usan Notas/Keep
-
-OPCIÓN 2: React (web app)
-Pros:
-
-Más cómodo para escritores/artistas que prefieren teclado
-
-Más amigable para diseño visual amplio y edición creativa
-
-Mi consejo: empezá por Flutter móvil si querés algo más emocional y artístico.
-Luego, escalás a web para sincronizar experiencias.
-
-🧩 COLECCIONES DE FIRESTORE (modelo propuesto):
-js
-Copy
-Edit
-users
-  └─ userId
-       ├─ displayName
-       ├─ bio
-       ├─ profileImage
-       ├─ socialLinks
-       └─ settings
-
-notes
-  └─ noteId
-       ├─ title
-       ├─ content
-       ├─ userId
-       ├─ isPublic
-       ├─ emotionTag
-       ├─ media (url Spotify/YouTube)
-       ├─ scheduledDate (opcional)
-       ├─ createdAt
-       └─ updatedAt
-🪐 SLOGAN (ideas):
-“Don’t just save notes — keep what you feel.”
-
-“A house for your soul’s memories.”
-
-“Write for the present, remember for eternity.”
-
-✅ VALOR FINAL:
-Esta app no busca productividad, sino memoria emocional.
-Una especie de diario digital artístico, íntimo, musical y visual, en donde cada entrada tiene alma.
+<p align="center">
+  <img src="assets/pikachu.jpg" width="50" alt="Pikachu">
+  <img src="assets/squirtle.jpg" width="50" alt="Squirtle">
+  <img src="assets/charmander.webp" width="50" alt="Charmander">
+  <img src="assets/bulbasaur.jpg" width="50" alt="Bulbasaur">
+  <img src="assets/eevee.jpg" width="50" alt="Eevee">
+</p>
