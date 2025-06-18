@@ -1,4 +1,4 @@
-# 🌟 Arbook - Tu Pokédex Emocional 🌟
+# 🌟 Arbook - Tu Pokédex Emocional (Versión Beta) 🌟
 
 ![Arbook Logo](assets/logo.png)
 
@@ -92,38 +92,9 @@ Arbook nace de la idea de que nuestras emociones son como Pokémon: diversas, po
 
 > "Las emociones son como Pokémon raros - si no las capturas cuando aparecen, podrían desaparecer para siempre" - Filosofía Arbook
 
-## 🤝 Contribuciones
-
-¡Las contribuciones son bienvenidas! Si tienes ideas para nuevos Pokémon emocionales, tipos de entradas o características:
-
-1. Haz fork del repositorio
-2. Crea una rama para tu característica (`git checkout -b feature/amazing-feature`)
-3. Haz commit de tus cambios (`git commit -m 'Add some amazing feature'`)
-4. Push a la rama (`git push origin feature/amazing-feature`)
-5. Abre un Pull Request
-
-## 📜 Licencia
-
-Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## 💌 Contacto
-
-¿Preguntas, sugerencias o simplemente quieres compartir tu Pokémon emocional del día? ¡Contáctanos!
-
-- **Email**: [arbook@example.com](mailto:arbook@example.com)
-- **Twitter**: [@ArbookApp](https://twitter.com/ArbookApp)
-- **Instagram**: [@ArbookEmotional](https://instagram.com/ArbookEmotional)
-
----
-
-<p align="center">
-  Desarrollado con 💖 y una Pokédex llena de emociones
-</p>
 
 <p align="center">
   <img src="assets/pikachu.jpg" width="50" alt="Pikachu">
   <img src="assets/squirtle.jpg" width="50" alt="Squirtle">
-  <img src="assets/charmander.webp" width="50" alt="Charmander">
-  <img src="assets/bulbasaur.jpg" width="50" alt="Bulbasaur">
-  <img src="assets/eevee.jpg" width="50" alt="Eevee">
+  <img src="assets/bulbasaur.jpg" width="50" height="50" alt="Bulbasaur">
 </p>
