@@ -72,9 +72,9 @@ flutter run
 ## 📸 Capturas de Pantalla
 
 <div style="display: flex; justify-content: space-between;">
-  <img src="screenshots/login.png" width="30%" alt="Pantalla de Login">
-  <img src="screenshots/home.png" width="30%" alt="Pantalla Principal">
-  <img src="screenshots/write.png" width="30%" alt="Escribir Entrada">
+  <img src="assets/Screenshot 2025-06-17 235040.png" width="30%" alt="Pantalla de Login">
+  <img src="assets/Screenshot 2025-06-17 235143.png" width="30%" alt="Pantalla Principal">
+  <img src="assets/Screenshot 2025-06-17 235249.png" width="30%" alt="Escribir Entrada">
 </div>
 
 ## 🗺️ Mapa de la Aplicación
